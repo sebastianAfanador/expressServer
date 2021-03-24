@@ -3,6 +3,8 @@ const morgan = require("morgan")
 const db = require('../config/db.js')
 const c = console.log
 
+
+
 var app = express()
 const puerto = 3000
 
@@ -12,8 +14,20 @@ app.get("/",(peticion,respuesta) =>{
     respuesta.send("<h1>Servidor corriendo exitosamente</h1>")
 })
 
+
 app.post("/ventas",(peticion, respuesta)=>{
-    db.conexion.query("select * from venta limit 5",(error, resultado, campos)=>{
+    db.conexion.query("select * from venta",(error, resultado, campos)=>{
+        if(error) error
+        respuesta
+        .header('Access-Control-Allow-Origin', '*')
+        .send({resultado})
+    });
+})
+
+//comentario
+
+app.post("/total_de_ventas",(peticion, respuesta)=>{
+    db.conexion.query("select * from venta",(error, resultado, campos)=>{
         if(error) error
         respuesta
         .header('Access-Control-Allow-Origin', '*')
@@ -22,7 +36,7 @@ app.post("/ventas",(peticion, respuesta)=>{
 })
 
 app.post("/clientes",(peticion, respuesta)=>{
-    db.conexion.query("select * from cliente limit 3",(error, resultado, campos)=>{
+    db.conexion.query("select * from cliente",(error, resultado, campos)=>{
         if(error) throw error
         respuesta
         .header('Access-Control-Allow-Origin', '*')
@@ -33,7 +47,9 @@ app.post("/clientes",(peticion, respuesta)=>{
 app.post("/producto_venta",async (peticion, respuesta)=>{
     try {
         const data = await correrQuery('select * from producto_venta')
-        respuesta.send({data:data.resultado})
+        respuesta
+        .header('Access-Control-Allow-Origin', '*')
+        .send({data:data.resultado})
     } catch (error) {
         console.log(`/producto_venta: ${error}`)   
     }
